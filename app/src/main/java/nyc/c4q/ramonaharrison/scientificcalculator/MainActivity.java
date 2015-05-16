@@ -86,14 +86,14 @@ public class MainActivity extends ActionBarActivity {
         if (rad != null && deg != null) {
             if (isDeg) {
                 deg.setBackgroundColor(Color.CYAN);
-                deg.setTextColor(Color.DKGRAY);
+                deg.setTextColor(Color.LTGRAY);
                 rad.setBackgroundColor(Color.LTGRAY);
                 rad.setTextColor(Color.GRAY);
             } else {
                 deg.setBackgroundColor(Color.LTGRAY);
                 deg.setTextColor(Color.GRAY);
                 rad.setBackgroundColor(Color.CYAN);
-                rad.setTextColor(Color.DKGRAY);
+                rad.setTextColor(Color.LTGRAY);
             }
         }
     }
