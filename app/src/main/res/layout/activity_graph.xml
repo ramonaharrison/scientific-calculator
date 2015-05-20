@@ -1,0 +1,110 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="nyc.c4q.ramonaharrison.scientificcalculator.GraphActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <nyc.c4q.ramonaharrison.scientificcalculator.GraphView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/graph" />
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_weight="3"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:text="y  ="
+                    android:id="@+id/y_equals" />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/input_equation"
+                    android:layout_height="50dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:inputType="textNoSuggestions"
+                    android:ems="20"
+                    android:background="@drawable/calculator_bar"/>
+            </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:layout_weight="3"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="x min  ="
+                android:id="@+id/min_equals" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:id="@+id/input_min"
+                android:layout_height="30dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:inputType="numberSigned"
+                android:ems="10"
+                android:text="-10"
+                android:background="@drawable/calculator_bar"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="x max  ="
+                android:id="@+id/max_equals" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:id="@+id/input_max"
+                android:layout_height="30dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:inputType="numberSigned"
+                android:text="10"
+                android:ems="10"
+                android:background="@drawable/calculator_bar"/>
+        </LinearLayout>
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="3"
+            android:text="Graph"
+            android:id="@+id/graph_it" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -208,7 +208,7 @@
                 android:id="@+id/zero" />
 
             <Button
-                android:onClick="type"
+                android:onClick="point"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
