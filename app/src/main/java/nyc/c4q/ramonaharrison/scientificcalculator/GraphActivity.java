@@ -31,6 +31,9 @@ public class GraphActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        //TODO save instance state
+
         super.onCreate(savedInstanceState);
         display = getWindowManager().getDefaultDisplay();
         setContentView(R.layout.activity_graph);
@@ -76,6 +79,7 @@ public class GraphActivity extends ActionBarActivity {
             y = Float.valueOf(yString);
         } else {
             Toast.makeText(getApplicationContext(), "Invalid equation!", Toast.LENGTH_SHORT).show();
+            // TODO: get toast out of loop
         }
         return y;
     }

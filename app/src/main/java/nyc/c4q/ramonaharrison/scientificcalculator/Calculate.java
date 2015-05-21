@@ -9,22 +9,13 @@ public class Calculate
 {
     public static void main(String[] args)
     {
-        String inputExpression = "100+5%";
-        //System.out.println(calculate(inputExpression, false));
-        String tonsoffactorials = "3! + (7! / 6) * 5% + 4! + 8454543.25! + 4E7!";
-        ArrayList<Integer> facEnds = findFactorialEnds(tonsoffactorials);
-        ArrayList<String> facs = findFactorialStarts(tonsoffactorials, facEnds);
-        for (int place : facEnds) {
-            //System.out.println(place);
-        }
-        for (String fac: facs) {
-            System.out.println(fac);
-        }
+//        String inputExpression = "4! + 3!";
+//        System.out.println(calculate(inputExpression, false));
 
     }
 
     public static ArrayList findFactorialEnds(String parseExpression) {
-        ArrayList<Integer> factorialEnds = new ArrayList();
+        ArrayList<Integer> factorialEnds = new ArrayList<Integer>();
         int start = 0;
         int facEnd = 0;
         while (facEnd != -1) {
@@ -40,20 +31,20 @@ public class Calculate
 
     public static ArrayList findFactorialStarts(String parseExpression, ArrayList<Integer> factorialEnds) {
 
-        ArrayList<String> factorials = new ArrayList<>();
+        ArrayList<String> factorials = new ArrayList<String>();
 
         for (int exclamation : factorialEnds) {
-            String factorial = "";
+            String stringFactorial = "";
             for (int i = exclamation; i >= 0; i--) {
                 char c = parseExpression.charAt(i);
                 if (c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9' || c == '0' || c == '.' || c == 'E' || c == '!') {
-                    factorial = c + factorial;
+                    stringFactorial = c + stringFactorial;
                 } else {
-                    factorials.add(factorial);
+                    factorials.add(stringFactorial);
                     break;
                 }
                 if (i == 0) {
-                    factorials.add(factorial);
+                    factorials.add(stringFactorial);
                 }
             }
 
@@ -61,7 +52,23 @@ public class Calculate
         return factorials;
     }
 
+    public static ArrayList<String> parseFactorials(ArrayList<String> factorials){
 
+        ArrayList<String> parsedFacs = new ArrayList<String>();
+
+        for (String fac: factorials){
+
+            int factorial = Integer.valueOf(fac.substring(0, fac.length() - 1));
+            int n = 1;
+
+            while(factorial != 1) {
+                n *= factorial;
+                factorial--;
+            }
+            parsedFacs.add(String.valueOf(n));
+        }
+        return parsedFacs;
+    }
     public static String calculate(String inputExpression, boolean degrees) {
 
         String parseExpression = "";
@@ -72,6 +79,10 @@ public class Calculate
             parseExpression = inputExpression.replaceAll("%", "*.01");
             inputExpression = parseExpression;
             parseExpression = inputExpression.replaceAll("e", "2.71828182846");
+            inputExpression = parseExpression;
+            parseExpression = inputExpression.replaceAll("√\\(", "SQRT(");
+            inputExpression = parseExpression;
+            parseExpression = inputExpression.replaceAll("π", "PI");
             inputExpression = parseExpression;
 
             parseExpression = inputExpression.replaceAll("0p", "0*p");
@@ -222,38 +233,38 @@ public class Calculate
             parseExpression = inputExpression.replaceAll("9c", "9*c");
             inputExpression = parseExpression;
             parseExpression = inputExpression.replaceAll("9t", "9*t");
+            inputExpression = parseExpression;
 
+
+            ArrayList<Integer> facEnds = findFactorialEnds(parseExpression);
+            ArrayList<String> facs = findFactorialStarts(parseExpression, facEnds);
+            ArrayList<String> parsedFacs = parseFactorials(facs);
+            for (String fac: facs) {
+                System.out.println(fac);
+            }
+
+            for (int i = 0; i <= facs.size()-1; i++){
+                parseExpression = inputExpression.replaceAll(facs.get(i), parsedFacs.get(i));
+                inputExpression = parseExpression;
+            }
         }
 
-
-
-
         String result = "";
-        String resultDegrees = "";
         try{
             IMathParser parser = MathParserFactory.create();
+            Double resultDouble = 0.0;
+
             parser.setExpression(parseExpression);
 
-            Double resultDouble = parser.getValue();
-
-            Double degResult = Math.toDegrees(resultDouble);
-            resultDegrees = degResult.toString();
+            resultDouble = parser.getValue();
 
             result = resultDouble.toString();
 
             System.out.println(result);
-            System.out.println(degResult);
         }catch(Exception ex){
             System.out.println(ex.getMessage());
-            result = ex.getMessage();
-        }
-
-        if (degrees){ // TODO: returns all values as degrees, should only return degrees for trigonometric equations
-            return resultDegrees;
         }
 
         return result;
     }
-
-
 }

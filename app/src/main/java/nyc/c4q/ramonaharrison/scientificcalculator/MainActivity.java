@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,19 +28,21 @@ public class MainActivity extends ActionBarActivity {
     private Button log;
     private Button sqrt;
     private Button ansb;
-    private Button toThe;
     private Button rad;
     private Button deg;
+    private Button ceac;
     private Random random;
 
-    private boolean isDeg;      // radian/degree mode
-    private boolean isInv;      // inv button mode
-    private String equation;    // equation raw format
-    private String cache;       // text above calculator bar
-    private String result;      // result
-    private String display;     // equation formatted for display to the calculator bar
+
+    private boolean isDeg;
+    private boolean isInv;
+    private String equation;
+    private String cache;
+    private String result;
+    private String display;
     private String ans;
-    private String closeParens; // helper string for matching parentheses
+    private String closeParens;
+    private int ce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,8 @@ public class MainActivity extends ActionBarActivity {
         log = (Button) findViewById(R.id.log);
         sqrt = (Button) findViewById(R.id.sqrt);
         ansb = (Button) findViewById(R.id.ans);
-        toThe = (Button) findViewById(R.id.xy);
+        ceac = (Button) findViewById(R.id.ce);
+        ce = 0;
 
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
         {
@@ -164,14 +166,19 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void ce(View view) {
-        // CE button pressed
-        if (equation.length() == 0) {
+        ce += 1;
+        if (ce == 4) {
+            ceac.setText("AC");
+        }
+        if (equation.length() == 0 || ce == 5) {
             setEquation("");
             setCache("");
             setResult("");
             setDisplay("0");
             setAns("0");
             setCloseParens("");
+            ceac.setText("CE");
+            ce = 0;
         } else {
             if (equation.charAt(equation.length() - 1) == '(') {
                 if (closeParens.length() > 0) {
@@ -194,28 +201,82 @@ public class MainActivity extends ActionBarActivity {
         calculatorBar.setText(displayText, TextView.BufferType.SPANNABLE);
     }
 
+    public String pad(String equation) {
+        String paddedEquation = "";
+        for (int i = 0; i < equation.length(); i++) {
+            char c = equation.charAt(i);
+            if (c == '+' || c == '-') {
+                paddedEquation += " " + c + " ";
+            } else if (c == '*') {
+                paddedEquation += " × ";
+            } else if (c == '/') {
+                paddedEquation += " ÷ ";
+            } else {
+                paddedEquation += "" + c;
+            }
+        }
+
+        return paddedEquation;
+    }
+
     public void equals(View view) {
-        // equals button pressed
+
         addCloseParens();
         insertZero();
         cache = display + " = ";
-        result = Calculate.calculate(equation, isDeg); // TODO: result = calculate(equation);
-        if (isValue(result)) {
+        cacheBar.setText(cache);
+
+        if (isDeg) {
+            System.out.println("Degrees mode");
+            String equationToRad = parseTrigonometicExpressions(equation);
+            System.out.println(equationToRad);
+            result = Calculate.calculate(equationToRad, isDeg);
+        } else {
+            System.out.println("Radians mode");
+            result = Calculate.calculate(equation, isDeg);
+        }
+
+        if (isNumeric(result)) {
             ans = result;
             display = result;
+            equation = result;
         } else {
             display = "Error";
             Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
         }
-        equation = "";
-        closeParens = "";
+
         displayText();
-        cacheBar.setText(cache);
+
     }
 
-    public boolean isValue(String result) {
+    public static String parseTrigonometicExpressions(String equation) {
+        String[] trigExpressions = {"sin(", "cos(", "tan("};
+        for (int i = 0; i < trigExpressions.length; i++) {
+            int index = -1;
+            do {
+                index = equation.indexOf(trigExpressions[i], index + 1);
+                if (index != -1) {
+                    String trigValue = equation.substring(index, equation.indexOf(')', index) + 1);
+                    String newValue = trigExpressions[i] + toRadians(extractNumber(trigValue)) + ")";
+                    equation = equation.replace(trigValue, newValue);
+                }
+            } while (index != -1);
+        }
+        return equation;
+    }
+
+    public static double extractNumber(String expression) {
+
+        return Double.valueOf(expression.replaceAll("[^0-9.E-]", ""));
+
+    }
+
+    public static double toRadians(double degrees) {
+        return degrees * (Math.PI/180);
+    }
+
+    public boolean isNumeric(String result) {
         for (int i = 0; i < result.length(); i++) {
-            // checks for only numeric values in result
             char c = result.charAt(i);
             if ((c < 45 || c > 57) && c != 69) {
                 return false;
@@ -227,7 +288,13 @@ public class MainActivity extends ActionBarActivity {
     public void addCloseParens() {
         equation += closeParens;
         display += closeParens;
+        closeParens = "";
     }
+
+
+
+
+    // This section contains onClick functions for the calculator buttons
 
     public void openParen(View view) {
         closeParens += ")";
@@ -325,7 +392,6 @@ public class MainActivity extends ActionBarActivity {
             log.setText("10ⁿ");
             sqrt.setText("x²");
             ansb.setText("Rnd");
-            toThe.setText("ⁿ√x");
         } else {
             isInv = false;
             sin.setText("sin");
@@ -335,7 +401,6 @@ public class MainActivity extends ActionBarActivity {
             log.setText("log");
             sqrt.setText("√");
             ansb.setText("Ans");
-            toThe.setText("xⁿ");
         }
     }
 
@@ -421,6 +486,7 @@ public class MainActivity extends ActionBarActivity {
         if (!isInv) {
             typeSpecial(ans);
         } else {
+            //TODO: make rand a 00.00 float
             typeSpecial("" + random.nextInt(100));
         }
     }
@@ -432,30 +498,7 @@ public class MainActivity extends ActionBarActivity {
     public void toThe(View view) {
         closeParens += ")";
         insertZero();
-        if (!isInv) {
-            typeSpecial("^(");
-        } else {
-            closeParens += ")";
-            typeSpecial("(√(");
-        }
-    }
-
-    public String pad(String equation) {
-        String paddedEquation = "";
-        for (int i = 0; i < equation.length(); i++) {
-            char c = equation.charAt(i);
-            if (c == '+' || c == '-') {
-                paddedEquation += " " + c + " ";
-            } else if (c == '*') {
-                paddedEquation += " × ";
-            } else if (c == '/') {
-                paddedEquation += " ÷ ";
-            } else {
-                paddedEquation += "" + c;
-            }
-        }
-
-        return paddedEquation;
+        typeSpecial("^(");
     }
 
 
@@ -477,7 +520,6 @@ public class MainActivity extends ActionBarActivity {
             case R.id.action_calculator:
                 return true;
             case R.id.action_graph:
-                Log.d("event", "touched graph");
                 Intent graphIntent = new Intent(this, GraphActivity.class);
                 this.startActivity(graphIntent);
                 return true;
@@ -485,10 +527,6 @@ public class MainActivity extends ActionBarActivity {
                 return super.onOptionsItemSelected(item);
         }
 
-    }
-
-    public boolean isDeg() {
-        return isDeg;
     }
 
     public void setDeg(boolean deg) {
