@@ -223,6 +223,7 @@ public class MainActivity extends ActionBarActivity {
 
         addCloseParens();
         insertZero();
+        ce = 0;
         cache = display + " = ";
         cacheBar.setText(cache);
 
@@ -486,8 +487,7 @@ public class MainActivity extends ActionBarActivity {
         if (!isInv) {
             typeSpecial(ans);
         } else {
-            //TODO: make rand a 00.00 float
-            typeSpecial("" + random.nextInt(100));
+            typeSpecial("" + String.format("%.2f", random.nextFloat() * 100.0f));
         }
     }
 

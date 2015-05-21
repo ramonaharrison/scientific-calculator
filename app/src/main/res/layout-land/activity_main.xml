@@ -23,8 +23,7 @@
             android:id="@+id/cache" />
 
         <EditText android:id="@+id/calculator_bar"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_margin="4dp"
             android:cursorVisible="false"
             android:gravity="end|center_vertical"
             android:paddingRight="10dp"
@@ -32,6 +31,9 @@
             android:layout_height="50dp"
             android:inputType="textNoSuggestions"
             android:ems="20"
+            android:lines="1"
+            android:scrollHorizontally="true"
+            android:ellipsize="start"
             android:background="@drawable/calculator_bar"/>
 
         <LinearLayout
